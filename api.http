@@ -1,0 +1,61 @@
+@API_ROOT=http://localhost:8080
+
+GET {{API_ROOT}}/users/all
+
+###
+
+POST {{API_ROOT}}/v2/geosubmit
+Content-Type: application/json
+
+{"items": [{
+    "timestamp": 1405602028568,
+    "position": {
+        "latitude": -22.7539192,
+        "longitude": -43.4371081,
+        "accuracy": 10.0,
+        "age": 1000,
+        "altitude": 100.0,
+        "altitudeAccuracy": 50.0,
+        "heading": 45.0,
+        "pressure": 1013.25,
+        "speed": 3.6,
+        "source": "gps"
+    },
+    "bluetoothBeacons": [
+        {
+            "macAddress": "ff:23:45:67:89:ab",
+            "age": 2000,
+            "name": "beacon",
+            "signalStrength": -110
+        }
+    ],
+    "cellTowers": [
+        {
+            "radioType": "lte",
+            "mobileCountryCode": 208,
+            "mobileNetworkCode": 1,
+            "locationAreaCode": 2,
+            "cellId": 12345,
+            "age": 3000,
+            "asu": 31,
+            "primaryScramblingCode": 5,
+            "serving": 1,
+            "signalStrength": -51,
+            "timingAdvance": 1
+        }
+    ],
+    "wifiAccessPoints": [
+        {
+            "macAddress": "01:23:45:67:89:ab",
+            "age": 5000,
+            "channel": 6,
+            "frequency": 2437,
+            "radioType": "802.11n",
+            "signalToNoiseRatio": 13,
+            "signalStrength": -77
+        },
+        {
+            "macAddress": "23:45:67:89:ab:cd"
+        }
+    ]
+}]}
