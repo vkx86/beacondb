@@ -28,6 +28,7 @@ use crate::{bounds::Bounds, config::Config, model::Transmitter};
 
 /// Process new submissions
 pub async fn run(pool: PgPool, config: Config) -> Result<()> {
+    eprintln!("processing...");
     loop {
         let mut tx = pool.begin().await?;
         let reports =

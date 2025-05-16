@@ -61,31 +61,45 @@ async fn main() -> Result<()> {
     let pool = PgPool::connect(&config.database_url).await?;
     sqlx::migrate!().run(&pool).await?;
 
-    match cli.command {
-        Command::Serve => {
-            println!("beaconDB server is starting at port {}", config.http_port);
-            HttpServer::new(move || {
-                App::new()
-                    .app_data(web::Data::new(pool.clone()))
-                    .app_data(web::JsonConfig::default().limit(500 * 1024 * 1024))
-                    .service(geoip::country_service)
-                    .service(geolocate::service)
-                    .service(submission::geosubmit::service)
-            })
-            .bind(("0.0.0.0", config.http_port))?
-            .run()
-            .await?;
-            println!("Gracefully stopped beaconDB server");
-        }
+    use tokio::time::{interval, Duration};
 
-        Command::Process => submission::process::run(pool, config).await?,
-        Command::Map => map::run(pool).await?,
+    if let Command::Serve = cli.command {
+        println!("beaconDB server is starting at port {}", config.http_port);
+        
+        let pool_clone = pool.clone();
+        let config_clone = config.clone();
+        tokio::spawn(async move {
+            let mut interval = interval(Duration::from_secs(60 * 60));
+            loop {
+                interval.tick().await;
+                if let Err(e) = submission::process::run(pool_clone.clone(), config_clone.clone()).await {
+                    eprintln!("Error running periodic processing: {}", e);
+                }
+            }
+        });
 
-        Command::Archive { command } => archive::run(pool, command).await?,
-
-        Command::ImportGeoip => geoip::import::run(pool).await?,
-        Command::FormatMls => mls::format()?,
-    };
+        HttpServer::new(move || {
+            App::new()
+                .app_data(web::Data::new(pool.clone()))
+                .app_data(web::JsonConfig::default().limit(500 * 1024 * 1024))
+                .service(geoip::country_service)
+                .service(geolocate::service)
+                .service(submission::geosubmit::service)
+        })
+        .bind(("0.0.0.0", config.http_port))?
+        .run()
+        .await?;
+        println!("Gracefully stopped beaconDB server");
+    } else {
+        match cli.command {
+            Command::Process => submission::process::run(pool, config).await?,
+            Command::Map => map::run(pool).await?,
+            Command::Archive { command } => archive::run(pool, command).await?,
+            Command::ImportGeoip => geoip::import::run(pool).await?,
+            Command::FormatMls => mls::format()?,
+            _ => {},
+        };
+    }
 
     Ok(())
 }

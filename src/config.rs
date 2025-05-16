@@ -9,7 +9,7 @@ use anyhow::{Context, Result};
 use serde::Deserialize;
 
 /// Rust representation of the configuration
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct Config {
     /// URL of the database
     pub database_url: String,
@@ -25,7 +25,7 @@ pub struct Config {
 }
 
 /// Rust representation of the statistics configuration
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct StatsConfig {
     /// Location where the statistics should be exported in JSON format
     pub path: PathBuf,
