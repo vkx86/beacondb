@@ -3,7 +3,7 @@
 
 use std::path::{Path, PathBuf};
 
-use actix_web::{web, App, HttpServer};
+use actix_web::{web, App, HttpServer, HttpResponse, get};
 use anyhow::Result;
 use clap::{Parser, Subcommand};
 use sqlx::PgPool;
@@ -48,6 +48,12 @@ enum Command {
     ImportGeoip,
 }
 
+/// Simple health check endpoint that returns "OK"
+#[get("/health")]
+async fn health_check() -> HttpResponse {
+    HttpResponse::Ok().body("OK")
+}
+
 #[tokio::main]
 async fn main() -> Result<()> {
     let cli = Cli::parse();
@@ -68,6 +74,7 @@ async fn main() -> Result<()> {
                 App::new()
                     .app_data(web::Data::new(pool.clone()))
                     .app_data(web::JsonConfig::default().limit(500 * 1024 * 1024))
+                    .service(health_check)  // Add health check endpoint
                     .service(geoip::country_service)
                     .service(geolocate::service)
                     .service(submission::geosubmit::service)

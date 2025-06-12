@@ -1,7 +1,7 @@
 @API_ROOT=http://localhost:8080
 # @API_ROOT=http://lane-keeper-alb-1204440081.eu-west-1.elb.amazonaws.com:8080
 
-GET {{API_ROOT}}/users/all
+GET {{API_ROOT}}/health
 
 ###
 
