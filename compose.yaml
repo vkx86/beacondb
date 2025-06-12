@@ -1,0 +1,15 @@
+services:
+
+  database:
+    image: postgis/postgis:15-3.4
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=1qazxsw2
+    volumes:
+      - ~/NetNav/pg-data:/var/lib/postgresql/data
+      # - ~/Documents/NetNav/pg-data:/var/lib/postgresql/data
+#    mem_limit: 1500m
+#    mem_reservation: 500m
+#    cpus: 0.4
