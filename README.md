@@ -93,3 +93,15 @@ The server can now be reached at `localhost:8080`.
 If you are using [NeoStumbler](https://github.com/mjaakko/NeoStumbler), you can go to `Settings > Reports > Endpoint > Endpoint` and enter `http://<your-ip>:8080` and hit save.
 Under `Settings > Other > Reupload data` you can reupload your collected and committed data for testing purposes.
 Make sure you are definitively your test server to not reupload data to a production database.
+
+## Run service
+
+- `screen` to start session
+- `cargo run serve` or `cargo run --release serve`
+- `Ctrl + a + d` to detach and return to your normal terminal
+
+`screen -r` to return to session
+
+cleanup screen sessions, if needed:
+- `screen -ls`
+- `screen -XS <session-id> quit`
